@@ -1,0 +1,46 @@
+name: Continuous Integration (Test)
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
+
+env:
+  FLUTTER_VERSION: '3.0.1'
+  WORKING_FLUTTER_DIRECTORY: 'flutter'
+  GIT_EMAIL: '15eb1137@gmail.com'
+  GIT_NAME: 'iori tobeta'
+
+
+jobs:
+  flutter_tests:
+    name: Flutter Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+      - working-directory: ${{ env.WORKING_FLUTTER_DIRECTORY }}
+        run: flutter pub get
+      - name: Format check
+        working-directory: ${{ env.WORKING_FLUTTER_DIRECTORY }}
+        if: always()
+        run: flutter format ./lib/ ./test/ -n --set-exit-if-changed
+      - name: Lint Check
+        working-directory: ${{ env.WORKING_FLUTTER_DIRECTORY }}
+        if: always()
+        run: flutter analyze
+      - name: Unit Tests
+        working-directory: ${{ env.WORKING_FLUTTER_DIRECTORY }}
+        if: always()
+        run: flutter test test/unit_test.dart
+      - name: Widget Tests
+        working-directory: ${{ env.WORKING_FLUTTER_DIRECTORY }}
+        if: always()
+        run: flutter test test/widget_test.dart

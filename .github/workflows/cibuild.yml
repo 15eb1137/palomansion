@@ -1,0 +1,150 @@
+name: Continuous Integration (Build)
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [closed]
+
+env:
+  FLUTTER_VERSION: '3.0.1'
+  WORKING_FLUTTER_DIRECTORY: 'flutter'
+  GIT_EMAIL: '15eb1137@gmail.com'
+  GIT_NAME: 'iori tobeta'
+
+
+jobs:
+  version_increment:
+    name: Flutter Version Increment
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps: 
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+      - name: yq current version
+        id: yq-current-version
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq '.version' "${{ env.WORKING_FLUTTER_DIRECTORY }}/pubspec.yaml"
+      - name: Split version string
+        id: split-version-string
+        run: |
+          vc=`echo ${{ steps.yq-current-version.outputs.result }} | cut -d "+" -f 1`
+          bv=`echo ${{ steps.yq-current-version.outputs.result }} | cut -d "+" -f 2`
+          echo "::set-output name=current-version-code::${vc}"
+          echo "::set-output name=current-build-version::${bv}"
+      - name: Major version increment
+        id: major-version
+        uses: christian-draeger/increment-semantic-version@1.0.2
+        if: contains(github.event.pull_request.labels.*.name, 'major')
+        with:
+          current-version: ${{ steps.split-version-string.outputs.current-version-code }}
+          version-fragment: 'major'
+      - name: Minor version increment
+        id: minor-version
+        uses: christian-draeger/increment-semantic-version@1.0.2
+        if: steps.major-version.conclusion == 'skipped' && contains(github.event.pull_request.labels.*.name, 'minor')
+        with:
+          current-version: ${{ steps.split-version-string.outputs.current-version-code }}
+          version-fragment: 'feature'
+      - name: Patch version increment
+        id: patch-version
+        uses: christian-draeger/increment-semantic-version@1.0.2
+        if: "!(steps.major-version.conclusion == 'success' || steps.minor-version.conclusion == 'success')"
+        with:
+          current-version: ${{ steps.split-version-string.outputs.current-version-code }}
+          version-fragment: 'bug'
+      - name: Incremented version
+        id: incremented-version
+        run: |
+          if ${{ steps.major-version.conclusion == 'success' }}; then
+            vc=`echo ${{ steps.major-version.outputs.next-version }}`
+            bv=`echo $((${{ steps.split-version-string.outputs.current-build-version }}))`
+            echo "::set-output name=version-code::${vc}"
+            echo "::set-output name=build-version::${bv}"
+          elif ${{ steps.minor-version.conclusion == 'success' }}; then
+            vc=`echo ${{ steps.minor-version.outputs.next-version }}`
+            bv=`echo $((${{ steps.split-version-string.outputs.current-build-version }}))`
+            echo "::set-output name=version-code::${vc}"
+            echo "::set-output name=build-version::${bv}"
+          else
+            vc=`echo ${{ steps.patch-version.outputs.next-version }}`
+            bv=`echo ${{ steps.split-version-string.outputs.current-build-version }}`
+            echo "::set-output name=version-code::${vc}"
+            echo "::set-output name=build-version::${bv}"
+          fi
+      - uses: mikefarah/yq@master
+        with:
+          cmd: NEXT_VERSIONS=${{ steps.incremented-version.outputs.version-code }}+${{ steps.incremented-version.outputs.build-version }} yq eval '.version = env(NEXT_VERSIONS)' -i ${{ env.WORKING_FLUTTER_DIRECTORY }}/pubspec.yaml
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          branch: ${{ github.base_ref }}
+          commit_message: '[chore] Auto Version Increment'
+  add_git_tag:
+    name: Add GitTag
+    needs: [version_increment]
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.base_ref }}
+      - name: yq current version
+        id: yq-current-version
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq '.version' "${{ env.WORKING_FLUTTER_DIRECTORY }}/pubspec.yaml"
+      - run: |
+          echo ${{ steps.yq-current-version.outputs.result }} > TAG_NAME
+          echo "${{ steps.yq-current-version.outputs.result }}" > TAG_MESSAGE
+          git -c user.name="${{ env.GIT_NAME }}" -c user.email="${{ env.GIT_EMAIL }}" tag -a $(cat TAG_NAME) -m $(cat TAG_MESSAGE)
+          git push origin $(cat TAG_NAME)
+  build_appbundle:
+    name: Build Flutter AppBundle
+    needs: [version_increment, add_git_tag]
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.base_ref }}
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+      - name: setup cache
+        uses: actions/cache@v1
+        with:
+          path: /Users/runner/hostedtoolcache/flutter
+          key: ${{ runner.OS }}-flutter-install-cache
+      - name: install flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable'
+      - working-directory: ${{ env.WORKING_FLUTTER_DIRECTORY }}
+        run: flutter pub get
+      - working-directory: ${{ env.WORKING_FLUTTER_DIRECTORY }}
+        run: echo -n ${{ secrets.KEYSTORE_BASE64 }} | base64 -d > android/app/release.jks
+      - working-directory: ${{ env.WORKING_FLUTTER_DIRECTORY }}
+        run: echo -n ${{ secrets.SERVICE_ACCOUNT_KEY_JSON }} | base64 -d > android/app/service_account_for_pub.json
+      - name: create key.properties
+        working-directory: ${{ env.WORKING_FLUTTER_DIRECTORY }}
+        run: |
+          echo 'storeFile=release.jks' > android/key.properties
+          echo 'serviceAccountFile=service_account_for_pub.json' >> android/key.properties
+          echo 'storePassword=${{ secrets.KEYSTORE_PASSWORD }}' >> android/key.properties
+          echo 'keyPassword=${{ secrets.KEY_PASSWORD }}' >> android/key.properties
+          echo 'keyAlias=${{ secrets.KEY_ALIAS }}' >> android/key.properties
+      - working-directory: ${{ env.WORKING_FLUTTER_DIRECTORY }}
+        run: flutter build appbundle
+      - uses: actions/upload-artifact@v1.0.0
+        with:
+          name: appbundle
+          path: flutter/build/app/outputs/bundle/release/app-release.aab

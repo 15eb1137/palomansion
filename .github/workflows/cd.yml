@@ -1,0 +1,76 @@
+name: Continuous Delivery
+on:
+  release:
+    types: [published]
+
+env:
+  FLUTTER_VERSION: '3.0.1'
+  WORKING_FLUTTER_DIRECTORY: 'flutter'
+  PACKAGE_NAME: 'com.iori.flutter_project_nickname'
+
+jobs:
+  deploy_android:
+    name: Upload to GooglePlayStore
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: main
+      - name: Update WhatsNew
+        run: |
+          `cat <<EOF > distribution/whatsnew/whatsnew-ja-JP
+          ${{ github.event.release.name }}
+          ${{ github.event.release.tag_name }}
+          ${{ github.event.release.html_url }}
+          EOF`
+      - uses: dawidd6/action-download-artifact@v2
+        with:
+          name: appbundle
+          path: flutter/build/app/outputs/bundle/release
+          workflow: cibuild.yml
+      - uses: r0adkll/upload-google-play@v1.0.17
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_KEY_JSON_PLAIN }}
+          packageName: ${{ env.PACKAGE_NAME }}
+          releaseFiles: flutter/build/app/outputs/bundle/release/app-release.aab
+          status: completed
+          track: internal
+          whatsNewDirectory: distribution/whatsnew
+  build_version_increment:
+    name: Flutter Build Version Increment
+    needs: [deploy_android]
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps: 
+      - uses: actions/checkout@v3
+        with:
+          ref: main
+      - name: yq current version
+        id: yq-current-version
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq '.version' "${{ env.WORKING_FLUTTER_DIRECTORY }}/pubspec.yaml"
+      - name: Split version string
+        id: split-version-string
+        run: |
+          vc=`echo ${{ steps.yq-current-version.outputs.result }} | cut -d "+" -f 1`
+          bv=`echo ${{ steps.yq-current-version.outputs.result }} | cut -d "+" -f 2`
+          echo "::set-output name=current-version-code::${vc}"
+          echo "::set-output name=current-build-version::${bv}"
+      - name: Incremented version
+        id: incremented-version
+        run: |
+          vc=`echo ${{ steps.split-version-string.outputs.current-version-code }}`
+          bv=`echo $((${{ steps.split-version-string.outputs.current-build-version }} + 1))`
+          echo "::set-output name=version-code::${vc}"
+          echo "::set-output name=build-version::${bv}"
+      - uses: mikefarah/yq@master
+        with:
+          cmd: NEXT_VERSIONS=${{ steps.incremented-version.outputs.version-code }}+${{ steps.incremented-version.outputs.build-version }} yq eval '.version = env(NEXT_VERSIONS)' -i ${{ env.WORKING_FLUTTER_DIRECTORY }}/pubspec.yaml
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          branch: main
+          commit_message: '[chore] Auto Build Version Increment'

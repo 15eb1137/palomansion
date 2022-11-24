@@ -1,0 +1,35 @@
+# .github/release.yml
+
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+    authors:
+      - github-actions[bot]
+  categories:
+  - title: '🚀 Features'
+    labels:
+      - 'feature'
+  - title: '💪 Enhancement'
+    labels:
+      - 'enhancement'
+  - title: '🐛 Bug Fixes'
+    labels:
+      - 'fix'
+      - 'bugfix'
+      - 'bug'
+  - title: '🧰 Maintenance'
+    labels:
+      - 'chore'
+  - title: '🔧 Refactoring'
+    labels:
+      - 'refactor'
+  - title: '📖 Documentation'
+    labels:
+      - 'documentation'
+  - title: '⛓️ Dependency update'
+    labels:
+      - 'dependencies'
+  - title: '✅ Other Changes'
+    labels:
+      - '*'
