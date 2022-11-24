@@ -63,7 +63,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '402933905312',
     projectId: 'palomansion-dev',
     storageBucket: 'palomansion-dev.appspot.com',
-    iosClientId: '402933905312-108sj9jg42impiuflu03as5dnrbgm2sg.apps.googleusercontent.com',
+    iosClientId:
+        '402933905312-108sj9jg42impiuflu03as5dnrbgm2sg.apps.googleusercontent.com',
     iosBundleId: 'com.iori.palomansion.dev',
   );
 }
