@@ -6,7 +6,7 @@ on:
       - 'main'
 
 env:
-  FLUTTER_VERSION: '3.0.1'
+  FLUTTER_VERSION: '3.0.5'
   WORKING_FLUTTER_DIRECTORY: 'flutter'
 
 jobs:
