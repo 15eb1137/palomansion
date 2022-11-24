@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>870593747030-hjr5nt61udfdlogg2uk5rqub0qd20cgm.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.870593747030-hjr5nt61udfdlogg2uk5rqub0qd20cgm</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDHtLyJGuHvtjs_LHfAVD0Oj4oczv7p4zs</string>
+	<key>GCM_SENDER_ID</key>
+	<string>870593747030</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.iori.palomansion</string>
+	<key>PROJECT_ID</key>
+	<string>palomansion</string>
+	<key>STORAGE_BUCKET</key>
+	<string>palomansion.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:870593747030:ios:86addbff1de3db3acec3f7</string>
+</dict>
+</plist>
