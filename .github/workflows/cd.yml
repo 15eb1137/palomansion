@@ -4,9 +4,9 @@ on:
     types: [published]
 
 env:
-  FLUTTER_VERSION: '3.0.1'
+  FLUTTER_VERSION: '3.0.5'
   WORKING_FLUTTER_DIRECTORY: 'flutter'
-  PACKAGE_NAME: 'com.iori.flutter_project_nickname'
+  PACKAGE_NAME: 'com.iori.palomansion'
 
 jobs:
   deploy_android:
