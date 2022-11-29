@@ -1,0 +1,32 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "flutter_dev",
+            "cwd": "flutter",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "type": "dart",
+            "flutterMode": "debug",
+            "args": [
+                "--dart-define=APP_NAME=com.iori.palomansion.dev",
+                "--dart-define=APP_SUFFIX=.dev",
+                "--dart-define=APP_ENV=debug",
+                "--dart-define=APP_ASSOCIATED_DOMAIN=applinks:com.iori.page.link"
+            ]
+        },
+        {
+            "name": "flutter_prod",
+            "cwd": "flutter",
+            "request": "launch",
+            "program": "lib/main.dart",
+            "type": "dart",
+            "flutterMode": "release",
+            "args": [
+                "--dart-define=APP_NAME=com.iori.palomansion",
+                "--dart-define=APP_ENV=release",
+                "--dart-define=APP_ASSOCIATED_DOMAIN=applinks:com.iori.page.link"
+            ]
+        }
+    ]
+}
