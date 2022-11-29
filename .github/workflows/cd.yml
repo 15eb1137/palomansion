@@ -29,7 +29,7 @@ jobs:
           name: appbundle
           path: flutter/build/app/outputs/bundle/release
           workflow: cibuild.yml
-      - uses: r0adkll/upload-google-play@v1.0.17
+      - uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_KEY_JSON_PLAIN }}
           packageName: ${{ env.PACKAGE_NAME }}
@@ -58,15 +58,15 @@ jobs:
         run: |
           vc=`echo ${{ steps.yq-current-version.outputs.result }} | cut -d "+" -f 1`
           bv=`echo ${{ steps.yq-current-version.outputs.result }} | cut -d "+" -f 2`
-          echo "::set-output name=current-version-code::${vc}"
-          echo "::set-output name=current-build-version::${bv}"
+          echo "current-version-code=${vc}" >> $GITHUB_OUTPUT
+          echo "current-build-version=${bv}" >> $GITHUB_OUTPUT
       - name: Incremented version
         id: incremented-version
         run: |
           vc=`echo ${{ steps.split-version-string.outputs.current-version-code }}`
           bv=`echo $((${{ steps.split-version-string.outputs.current-build-version }} + 1))`
-          echo "::set-output name=version-code::${vc}"
-          echo "::set-output name=build-version::${bv}"
+          echo "version-code=${vc}" >> $GITHUB_OUTPUT
+          echo "build-version=${bv}" >> $GITHUB_OUTPUT
       - uses: mikefarah/yq@master
         with:
           cmd: NEXT_VERSIONS=${{ steps.incremented-version.outputs.version-code }}+${{ steps.incremented-version.outputs.build-version }} yq eval '.version = env(NEXT_VERSIONS)' -i ${{ env.WORKING_FLUTTER_DIRECTORY }}/pubspec.yaml

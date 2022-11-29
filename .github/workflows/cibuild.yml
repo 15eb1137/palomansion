@@ -34,25 +34,25 @@ jobs:
         run: |
           vc=`echo ${{ steps.yq-current-version.outputs.result }} | cut -d "+" -f 1`
           bv=`echo ${{ steps.yq-current-version.outputs.result }} | cut -d "+" -f 2`
-          echo "::set-output name=current-version-code::${vc}"
-          echo "::set-output name=current-build-version::${bv}"
+          echo "current-version-code=${vc}" >> $GITHUB_OUTPUT
+          echo "current-build-version=${bv}" >> $GITHUB_OUTPUT
       - name: Major version increment
         id: major-version
-        uses: christian-draeger/increment-semantic-version@1.0.2
+        uses: christian-draeger/increment-semantic-version@1.0.3
         if: contains(github.event.pull_request.labels.*.name, 'major')
         with:
           current-version: ${{ steps.split-version-string.outputs.current-version-code }}
           version-fragment: 'major'
       - name: Minor version increment
         id: minor-version
-        uses: christian-draeger/increment-semantic-version@1.0.2
+        uses: christian-draeger/increment-semantic-version@1.0.3
         if: steps.major-version.conclusion == 'skipped' && contains(github.event.pull_request.labels.*.name, 'minor')
         with:
           current-version: ${{ steps.split-version-string.outputs.current-version-code }}
           version-fragment: 'feature'
       - name: Patch version increment
         id: patch-version
-        uses: christian-draeger/increment-semantic-version@1.0.2
+        uses: christian-draeger/increment-semantic-version@1.0.3
         if: "!(steps.major-version.conclusion == 'success' || steps.minor-version.conclusion == 'success')"
         with:
           current-version: ${{ steps.split-version-string.outputs.current-version-code }}
@@ -63,18 +63,18 @@ jobs:
           if ${{ steps.major-version.conclusion == 'success' }}; then
             vc=`echo ${{ steps.major-version.outputs.next-version }}`
             bv=`echo $((${{ steps.split-version-string.outputs.current-build-version }}))`
-            echo "::set-output name=version-code::${vc}"
-            echo "::set-output name=build-version::${bv}"
+            echo "version-code=${vc}" >> $GITHUB_OUTPUT
+            echo "build-version=${bv}" >> $GITHUB_OUTPUT
           elif ${{ steps.minor-version.conclusion == 'success' }}; then
             vc=`echo ${{ steps.minor-version.outputs.next-version }}`
             bv=`echo $((${{ steps.split-version-string.outputs.current-build-version }}))`
-            echo "::set-output name=version-code::${vc}"
-            echo "::set-output name=build-version::${bv}"
+            echo "version-code=${vc}" >> $GITHUB_OUTPUT
+            echo "build-version=${bv}" >> $GITHUB_OUTPUT
           else
             vc=`echo ${{ steps.patch-version.outputs.next-version }}`
             bv=`echo ${{ steps.split-version-string.outputs.current-build-version }}`
-            echo "::set-output name=version-code::${vc}"
-            echo "::set-output name=build-version::${bv}"
+            echo "version-code=${vc}" >> $GITHUB_OUTPUT
+            echo "build-version=${bv}" >> $GITHUB_OUTPUT
           fi
       - uses: mikefarah/yq@master
         with:
@@ -119,7 +119,7 @@ jobs:
         with:
           java-version: '11'
       - name: setup cache
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: /Users/runner/hostedtoolcache/flutter
           key: ${{ runner.OS }}-flutter-install-cache
@@ -144,7 +144,7 @@ jobs:
           echo 'keyAlias=${{ secrets.KEY_ALIAS }}' >> android/key.properties
       - working-directory: ${{ env.WORKING_FLUTTER_DIRECTORY }}
         run: flutter build appbundle
-      - uses: actions/upload-artifact@v1.0.0
+      - uses: actions/upload-artifact@v3
         with:
           name: appbundle
           path: flutter/build/app/outputs/bundle/release/app-release.aab
