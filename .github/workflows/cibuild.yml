@@ -7,7 +7,7 @@ on:
     types: [closed]
 
 env:
-  FLUTTER_VERSION: '3.0.5'
+  FLUTTER_VERSION: '3.3.9'
   WORKING_FLUTTER_DIRECTORY: 'flutter'
   GIT_EMAIL: '15eb1137@gmail.com'
   GIT_NAME: 'iori tobeta'
