@@ -4,7 +4,7 @@ on:
     types: [published]
 
 env:
-  FLUTTER_VERSION: '3.0.5'
+  FLUTTER_VERSION: '3.3.9'
   WORKING_FLUTTER_DIRECTORY: 'flutter'
   PACKAGE_NAME: 'com.iori.palomansion'
 
