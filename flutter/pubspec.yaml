@@ -1,7 +1,7 @@
 name: palomansion
 description: A measurement of sound level app.
 publish_to: 'none'
-version: 0.0.9+3
+version: 0.0.10+3
 environment:
   sdk: ">=2.17.6 <3.0.0"
 dependencies:
