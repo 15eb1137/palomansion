@@ -8,12 +8,11 @@ class Panel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-        children: [
-          SfCartesianChart(),
-          const Text(''), // Big dB
-          const Text(''), // Detail Avg & Max dB
-          const Text('')  // dB size description
-        ]);
+    return Stack(children: [
+      SfCartesianChart(),
+      const Text(''), // Big dB
+      const Text(''), // Detail Avg & Max dB
+      const Text('') // dB size description
+    ]);
   }
 }
