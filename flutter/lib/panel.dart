@@ -13,7 +13,14 @@ class Panel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
-      SfCartesianChart(title: ChartTitle(text: ''), series: getData()),
+      SfCartesianChart(
+        title: ChartTitle(text: ''),
+        series: getData(),
+        primaryXAxis: CategoryAxis(
+            majorGridLines: const MajorGridLines(color: Colors.transparent)),
+        primaryYAxis: CategoryAxis(isVisible: false),
+        plotAreaBorderColor: Colors.transparent,
+      ),
       const Text(''), // Latest dB big
       const Text(''), // Detail Avg & Max dB
       const Text('') // dB size description
@@ -57,12 +64,12 @@ class Panel extends StatelessWidget {
     ];
     return <ColumnSeries<NoiseLv, Decibel>>[
       ColumnSeries(
-          dataSource: data,
-          xValueMapper: (datum, _) => datum.decibel,
-          yValueMapper: (datum, _) => datum.num,
-          pointColorMapper: (datum, _) =>
-              getColorFromMode(datum.appearanceRate),
-          width: 0.98),
+        dataSource: data,
+        xValueMapper: (datum, _) => datum.decibel,
+        yValueMapper: (datum, _) => datum.num,
+        pointColorMapper: (datum, _) => getColorFromMode(datum.appearanceRate),
+        width: 0.98,
+      ),
     ];
   }
 }
