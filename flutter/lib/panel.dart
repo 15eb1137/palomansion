@@ -72,6 +72,7 @@ class Panel extends StatelessWidget {
 
   static List<ColumnSeries<NoiseLv, Decibel>> getData() {
     final data = <NoiseLv>[
+      //magnificationはグラフを見やすくするためdBの定義的に正しい2.0の倍数にしてない
       NoiseLv(50, pow(1.5, 1).toDouble(), 80 / 30),
       NoiseLv(60, pow(1.5, 2).toDouble(), 100 / 30),
       NoiseLv(70, pow(1.5, 3).toDouble(), 25 / 30),
@@ -85,7 +86,7 @@ class Panel extends StatelessWidget {
       ColumnSeries(
         dataSource: data,
         xValueMapper: (datum, _) => datum.decibel,
-        yValueMapper: (datum, _) => datum.num,
+        yValueMapper: (datum, _) => datum.magnification,
         pointColorMapper: (datum, _) => getColorFromMode(datum.appearanceRate),
         width: 0.98,
       ),
@@ -94,8 +95,8 @@ class Panel extends StatelessWidget {
 }
 
 class NoiseLv {
-  NoiseLv(this.decibel, this.num, this.appearanceRate);
+  NoiseLv(this.decibel, this.magnification, this.appearanceRate);
   final int decibel;
-  final double num;
+  final double magnification;
   final double appearanceRate;
 }
