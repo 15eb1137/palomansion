@@ -16,10 +16,10 @@ class Panel extends StatelessWidget {
     ]);
   }
 
-  static List<LineSeries<num, num>> getDefaultData() {
+  static List<ColumnSeries<num, num>> getDefaultData() {
     final data = <num>[1, 2, 3, 4, 5];
-    return <LineSeries<num, num>>[
-      LineSeries(
+    return <ColumnSeries<num, num>>[
+      ColumnSeries(
           dataSource: data,
           xValueMapper: (datum, index) => datum,
           yValueMapper: (datum, index) => datum)
