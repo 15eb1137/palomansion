@@ -20,7 +20,7 @@ class Panel extends StatelessWidget {
             SizedBox(
               height: 400,
               child: SfCartesianChart(
-                series: getData(),
+                series: getData(decibels),
                 primaryXAxis: CategoryAxis(
                     majorGridLines:
                         const MajorGridLines(color: Colors.transparent)),
@@ -42,7 +42,8 @@ class Panel extends StatelessWidget {
                 ),
                 RichText(
                   text: TextSpan(children: [
-                    TextSpan(text: 'AVG:${decibels.average}dB'),
+                    TextSpan(
+                        text: 'AVG:${decibels.average.toStringAsFixed(1)}dB'),
                     const TextSpan(text: '｜'),
                     TextSpan(text: 'MAX:${decibels.max}dB'),
                   ], style: const TextStyle(color: Colors.grey, fontSize: 20)),
@@ -58,8 +59,8 @@ class Panel extends StatelessWidget {
                   height: 30,
                   decoration: const BoxDecoration(
                     gradient: LinearGradient(
-                      begin: FractionalOffset.centerLeft,
-                      end: FractionalOffset.centerRight,
+                      begin: FractionalOffset.centerRight,
+                      end: FractionalOffset.centerLeft,
                       colors: [
                         Colors.teal,
                         Colors.green,
@@ -81,19 +82,19 @@ class Panel extends StatelessWidget {
   }
 
   static Color getColorFromMode(double rate) {
-    if (rate > 0.875) {
+    if (rate > 0.75) {
       return Colors.teal;
-    } else if (rate > 0.75) {
-      return Colors.green;
-    } else if (rate > 0.625) {
-      return Colors.lightGreen;
     } else if (rate > 0.5) {
+      return Colors.green;
+    } else if (rate > 0.31) {
+      return Colors.lightGreen;
+    } else if (rate > 0.16) {
       return Colors.lime;
-    } else if (rate > 0.375) {
+    } else if (rate > 0.07) {
       return Colors.yellow;
-    } else if (rate > 0.25) {
+    } else if (rate > 0.02) {
       return Colors.orange;
-    } else if (rate > 0.125) {
+    } else if (rate > 0.01) {
       return Colors.deepOrange;
     } else if (rate > 0) {
       return Colors.red;
@@ -104,17 +105,22 @@ class Panel extends StatelessWidget {
     }
   }
 
-  static List<ColumnSeries<NoiseLv, Decibel>> getData() {
+  static List<ColumnSeries<NoiseLv, Decibel>> getData(List<Decibel> decibels) {
+    final total = decibels.length;
+    int getFreq(int binWidth, List<Decibel> decibels) => decibels
+        .where((db) => (binWidth / 10).floor() == (db / 10).floor())
+        .length;
+    double getMag(int exp) => pow(1.5, exp).toDouble();
     final data = <NoiseLv>[
       //magnificationはグラフを見やすくするためdBの定義的に正しい2.0の倍数にしてない
-      NoiseLv(50, pow(1.5, 1).toDouble(), 80 / 30),
-      NoiseLv(60, pow(1.5, 2).toDouble(), 100 / 30),
-      NoiseLv(70, pow(1.5, 3).toDouble(), 25 / 30),
-      NoiseLv(80, pow(1.5, 4).toDouble(), 14 / 30),
-      NoiseLv(90, pow(1.5, 5).toDouble(), 8 / 30),
-      NoiseLv(100, pow(1.5, 6).toDouble(), 1 / 30),
-      NoiseLv(110, pow(1.5, 7).toDouble(), 0 / 30),
-      NoiseLv(120, pow(1.5, 8).toDouble(), 0 / 30)
+      NoiseLv(50, getMag(1), getFreq(50, decibels) / total),
+      NoiseLv(60, getMag(2), getFreq(60, decibels) / total),
+      NoiseLv(70, getMag(3), getFreq(70, decibels) / total),
+      NoiseLv(80, getMag(4), getFreq(80, decibels) / total),
+      NoiseLv(90, getMag(5), getFreq(90, decibels) / total),
+      NoiseLv(100, getMag(6), getFreq(100, decibels) / total),
+      NoiseLv(110, getMag(7), getFreq(110, decibels) / total),
+      NoiseLv(120, getMag(8), getFreq(120, decibels) / total),
     ];
     return <ColumnSeries<NoiseLv, Decibel>>[
       ColumnSeries(

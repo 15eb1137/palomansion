@@ -29,6 +29,7 @@ class MainPage extends StatelessWidget {
         appBar: AppBar(
           title: const Text('騒音ハック'),
         ),
-        body: const Panel([0]));
+        body: const Panel(
+            [54, 56, 75, 63, 67, 95, 73, 60, 40, 60, 67, 63, 70, 56, 73, 84]));
   }
 }
