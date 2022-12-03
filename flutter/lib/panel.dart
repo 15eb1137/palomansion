@@ -13,40 +13,71 @@ class Panel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        SizedBox(
-          height: 400,
-          child: SfCartesianChart(
-            series: getData(),
-            primaryXAxis: CategoryAxis(
-                majorGridLines:
-                    const MajorGridLines(color: Colors.transparent)),
-            primaryYAxis: CategoryAxis(isVisible: false),
-            plotAreaBorderColor: Colors.transparent,
-          ),
-        ),
-        Center(
-          child: Column(children: [
-            RichText(
-              text: TextSpan(children: [
-                TextSpan(
-                    text: '${decibels.last}',
-                    style: const TextStyle(fontSize: 64)),
-                const TextSpan(text: 'dB', style: TextStyle(fontSize: 16))
-              ], style: const TextStyle(color: Colors.black)),
+    return SizedBox(
+        height: 450,
+        child: Stack(
+          children: [
+            SizedBox(
+              height: 400,
+              child: SfCartesianChart(
+                series: getData(),
+                primaryXAxis: CategoryAxis(
+                    majorGridLines:
+                        const MajorGridLines(color: Colors.transparent)),
+                primaryYAxis: CategoryAxis(isVisible: false),
+                plotAreaBorderColor: Colors.transparent,
+              ),
             ),
-            RichText(
-              text: TextSpan(children: [
-                TextSpan(text: 'AVG:${decibels.average}dB'),
-                const TextSpan(text: '|'),
-                TextSpan(text: 'MAX:${decibels.max}dB'),
-              ], style: const TextStyle(color: Colors.grey, fontSize: 20)),
-            )
-          ]),
-        )
-      ],
-    );
+            Positioned(
+              left: 20,
+              top: 48,
+              child: Column(children: [
+                RichText(
+                  text: TextSpan(children: [
+                    TextSpan(
+                        text: '${decibels.last}',
+                        style: const TextStyle(fontSize: 64)),
+                    const TextSpan(text: 'dB', style: TextStyle(fontSize: 16))
+                  ], style: const TextStyle(color: Colors.black)),
+                ),
+                RichText(
+                  text: TextSpan(children: [
+                    TextSpan(text: 'AVG:${decibels.average}dB'),
+                    const TextSpan(text: '｜'),
+                    TextSpan(text: 'MAX:${decibels.max}dB'),
+                  ], style: const TextStyle(color: Colors.grey, fontSize: 20)),
+                )
+              ]),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Row(mainAxisSize: MainAxisSize.min, children: [
+                const Text('少'),
+                Container(
+                  width: 250,
+                  height: 30,
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: FractionalOffset.centerLeft,
+                      end: FractionalOffset.centerRight,
+                      colors: [
+                        Colors.teal,
+                        Colors.green,
+                        Colors.lightGreen,
+                        Colors.lime,
+                        Colors.yellow,
+                        Colors.orange,
+                        Colors.deepOrange,
+                        Colors.red
+                      ],
+                    ),
+                  ),
+                ),
+                const Text('多'),
+              ]),
+            ),
+          ],
+        ));
   }
 
   static Color getColorFromMode(double rate) {
