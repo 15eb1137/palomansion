@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:collection/collection.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 typedef Decibel = int;
@@ -8,23 +9,41 @@ typedef Decibel = int;
 class Panel extends StatelessWidget {
   const Panel(this.decibels, {super.key});
 
-  final List<double> decibels;
+  final List<Decibel> decibels;
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
-      SfCartesianChart(
-        title: ChartTitle(text: ''),
-        series: getData(),
-        primaryXAxis: CategoryAxis(
-            majorGridLines: const MajorGridLines(color: Colors.transparent)),
-        primaryYAxis: CategoryAxis(isVisible: false),
-        plotAreaBorderColor: Colors.transparent,
-      ),
-      const Text(''), // Latest dB big
-      const Text(''), // Detail Avg & Max dB
-      const Text('') // dB size description
-    ]);
+    return Stack(
+      children: [
+        SfCartesianChart(
+          title: ChartTitle(text: ''),
+          series: getData(),
+          primaryXAxis: CategoryAxis(
+              majorGridLines: const MajorGridLines(color: Colors.transparent)),
+          primaryYAxis: CategoryAxis(isVisible: false),
+          plotAreaBorderColor: Colors.transparent,
+        ),
+        Center(
+          child: Column(children: [
+            RichText(
+              text: TextSpan(children: [
+                TextSpan(
+                    text: '${decibels.last}',
+                    style: const TextStyle(fontSize: 64)),
+                const TextSpan(text: 'dB', style: TextStyle(fontSize: 16))
+              ], style: const TextStyle(color: Colors.black)),
+            ),
+            RichText(
+              text: TextSpan(children: [
+                TextSpan(text: 'AVG:${decibels.average}dB'),
+                const TextSpan(text: '|'),
+                TextSpan(text: 'MAX:${decibels.max}dB'),
+              ], style: const TextStyle(color: Colors.grey, fontSize: 20)),
+            )
+          ]),
+        )
+      ],
+    );
   }
 
   static Color getColorFromMode(double rate) {
