@@ -17,11 +17,12 @@ class Panel extends StatelessWidget {
   }
 
   static List<LineSeries<num, num>> getDefaultData() {
+    final data = <num>[1, 2, 3, 4, 5];
     return <LineSeries<num, num>>[
       LineSeries(
-          dataSource: [],
-          xValueMapper: (datum, index) => null,
-          yValueMapper: (datum, index) => null)
+          dataSource: data,
+          xValueMapper: (datum, index) => datum,
+          yValueMapper: (datum, index) => datum)
     ];
   }
 }
