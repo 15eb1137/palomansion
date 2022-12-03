@@ -8,8 +8,11 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  # Firestore
+  collection: ^1.16.0  
+  # Firebase
   firebase_core: ^1.21.0
+  # UI
+  syncfusion_flutter_charts: ^20.3.59
 dev_dependencies:
   flutter_test:
     sdk: flutter
