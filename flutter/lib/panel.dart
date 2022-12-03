@@ -9,10 +9,19 @@ class Panel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
-      SfCartesianChart(),
+      SfCartesianChart(title: ChartTitle(text: ''), series: getDefaultData()),
       const Text(''), // Big dB
       const Text(''), // Detail Avg & Max dB
       const Text('') // dB size description
     ]);
+  }
+
+  static List<LineSeries<num, num>> getDefaultData() {
+    return <LineSeries<num, num>>[
+      LineSeries(
+          dataSource: [],
+          xValueMapper: (datum, index) => null,
+          yValueMapper: (datum, index) => null)
+    ];
   }
 }
