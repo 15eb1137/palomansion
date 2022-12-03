@@ -59,7 +59,8 @@ class Panel extends StatelessWidget {
           xValueMapper: (datum, _) => datum.decibel,
           yValueMapper: (datum, _) => datum.num,
           pointColorMapper: (datum, _) =>
-              getColorFromMode(datum.appearanceRate)),
+              getColorFromMode(datum.appearanceRate),
+          width: 0.98),
     ];
   }
 }
