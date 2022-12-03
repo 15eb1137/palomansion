@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -20,19 +22,19 @@ class Panel extends StatelessWidget {
 
   static Color getColorFromMode(double rate) {
     if (rate > 0.875) {
-      return Colors.green;
-    } else if (rate > 0.75) {
       return Colors.teal;
+    } else if (rate > 0.75) {
+      return Colors.green;
     } else if (rate > 0.625) {
-      return Colors.blue;
+      return Colors.lightGreen;
     } else if (rate > 0.5) {
-      return Colors.lightBlue;
+      return Colors.lime;
     } else if (rate > 0.375) {
-      return Colors.cyan;
-    } else if (rate > 0.25) {
       return Colors.yellow;
-    } else if (rate > 0.125) {
+    } else if (rate > 0.25) {
       return Colors.orange;
+    } else if (rate > 0.125) {
+      return Colors.deepOrange;
     } else if (rate > 0) {
       return Colors.red;
     } else if (rate == 0) {
@@ -44,14 +46,14 @@ class Panel extends StatelessWidget {
 
   static List<ColumnSeries<NoiseLv, Decibel>> getData() {
     final data = <NoiseLv>[
-      NoiseLv(50, 1, 8 / 30),
-      NoiseLv(60, 2, 10 / 30),
-      NoiseLv(70, 4, 5 / 30),
-      NoiseLv(80, 8, 4 / 30),
-      NoiseLv(90, 16, 2 / 30),
-      NoiseLv(100, 32, 1 / 30),
-      NoiseLv(110, 64, 0 / 30),
-      NoiseLv(120, 128, 0 / 30)
+      NoiseLv(50, pow(1.5, 1).toDouble(), 80 / 30),
+      NoiseLv(60, pow(1.5, 2).toDouble(), 100 / 30),
+      NoiseLv(70, pow(1.5, 3).toDouble(), 25 / 30),
+      NoiseLv(80, pow(1.5, 4).toDouble(), 14 / 30),
+      NoiseLv(90, pow(1.5, 5).toDouble(), 8 / 30),
+      NoiseLv(100, pow(1.5, 6).toDouble(), 1 / 30),
+      NoiseLv(110, pow(1.5, 7).toDouble(), 0 / 30),
+      NoiseLv(120, pow(1.5, 8).toDouble(), 0 / 30)
     ];
     return <ColumnSeries<NoiseLv, Decibel>>[
       ColumnSeries(
