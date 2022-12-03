@@ -15,13 +15,16 @@ class Panel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        SfCartesianChart(
-          title: ChartTitle(text: ''),
-          series: getData(),
-          primaryXAxis: CategoryAxis(
-              majorGridLines: const MajorGridLines(color: Colors.transparent)),
-          primaryYAxis: CategoryAxis(isVisible: false),
-          plotAreaBorderColor: Colors.transparent,
+        SizedBox(
+          height: 400,
+          child: SfCartesianChart(
+            series: getData(),
+            primaryXAxis: CategoryAxis(
+                majorGridLines:
+                    const MajorGridLines(color: Colors.transparent)),
+            primaryYAxis: CategoryAxis(isVisible: false),
+            plotAreaBorderColor: Colors.transparent,
+          ),
         ),
         Center(
           child: Column(children: [
