@@ -1,14 +1,14 @@
 name: palomansion
 description: A measurement of sound level app.
 publish_to: 'none'
-version: 0.0.10+3
+version: 0.1.0+3
 environment:
   sdk: ">=2.17.6 <3.0.0"
 dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  collection: ^1.16.0  
+  collection: ^1.16.0
   # Firebase
   firebase_core: ^1.21.0
   # UI
