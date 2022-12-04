@@ -9,8 +9,29 @@ env:
   PACKAGE_NAME: 'com.iori.palomansion'
 
 jobs:
+  add_release_git_tag:
+    name: Add Release GitTag
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.base_ref }}
+      - name: yq current version
+        id: yq-current-version
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq '.version' "${{ env.WORKING_FLUTTER_DIRECTORY }}/pubspec.yaml"
+      - run: |
+          echo "${{ steps.yq-current-version.outputs.result }}_release" > TAG_NAME
+          echo "${{ steps.yq-current-version.outputs.result }}_release" > TAG_MESSAGE
+          git -c user.name="${{ env.GIT_NAME }}" -c user.email="${{ env.GIT_EMAIL }}" tag -a $(cat TAG_NAME) -m $(cat TAG_MESSAGE)
+          git push origin $(cat TAG_NAME)
   deploy_android:
     name: Upload to GooglePlayStore
+    needs: [add_release_git_tag]
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -39,7 +60,7 @@ jobs:
           whatsNewDirectory: distribution/whatsnew
   build_version_increment:
     name: Flutter Build Version Increment
-    needs: [deploy_android]
+    needs: [add_release_git_tag, deploy_android]
     permissions:
       contents: write
     runs-on: ubuntu-latest
