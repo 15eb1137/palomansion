@@ -4,7 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-typedef Decibel = int;
+typedef Decibel = double;
 
 class Panel extends StatelessWidget {
   const Panel(this.decibels, {super.key});
@@ -35,7 +35,7 @@ class Panel extends StatelessWidget {
                 RichText(
                   text: TextSpan(children: [
                     TextSpan(
-                        text: '${decibels.last}',
+                        text: decibels.last.toStringAsFixed(0),
                         style: const TextStyle(fontSize: 64)),
                     const TextSpan(text: 'dB', style: TextStyle(fontSize: 16))
                   ], style: const TextStyle(color: Colors.black)),
@@ -45,7 +45,7 @@ class Panel extends StatelessWidget {
                     TextSpan(
                         text: 'AVG:${decibels.average.toStringAsFixed(1)}dB'),
                     const TextSpan(text: '｜'),
-                    TextSpan(text: 'MAX:${decibels.max}dB'),
+                    TextSpan(text: 'MAX:${decibels.max.toStringAsFixed(1)}dB'),
                   ], style: const TextStyle(color: Colors.grey, fontSize: 20)),
                 )
               ]),
@@ -136,7 +136,7 @@ class Panel extends StatelessWidget {
 
 class NoiseLv {
   NoiseLv(this.decibel, this.magnification, this.appearanceRate);
-  final int decibel;
+  final Decibel decibel;
   final double magnification;
   final double appearanceRate;
 }
