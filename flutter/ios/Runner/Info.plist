@@ -49,5 +49,7 @@
 		<false/>
 		<key>ITSAppUsesNonExemptEncryption</key>
 		<false/>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>Microphone for noise measurement.</string>
 	</dict>
 </plist>
