@@ -60,7 +60,8 @@ class MainPageState extends State<MainPage> {
       if (!_isRecording) {
         _isRecording = true;
       }
-      decibels.add(noiseReading.meanDecibel); // 一時的にmeanを使うけど、最終的には代表せず全部使うことになりそう
+      decibels
+          .add(noiseReading.meanDecibel); // 一時的にmeanを使うけど、最終的には代表せず全部使うことになりそう
     });
     if (kDebugMode) {
       print(noiseReading.toString());
