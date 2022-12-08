@@ -13,6 +13,7 @@ void main() {
   group('Learning test', () {
     TestWidgetsFlutterBinding.ensureInitialized();
     test('noise_meter', () async {
+      expect(NoiseMeter.sampleRate, 44100);
       const MethodChannel('flutter.baseflow.com/permissions/methods')
           .setMockMethodCallHandler((methodCall) async {
         if (methodCall.method == 'requestPermissions') {
