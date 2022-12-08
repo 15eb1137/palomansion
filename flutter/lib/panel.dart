@@ -23,7 +23,8 @@ class Panel extends StatelessWidget {
                 series: getData(decibels),
                 primaryXAxis: CategoryAxis(
                     majorGridLines:
-                        const MajorGridLines(color: Colors.transparent)),
+                        const MajorGridLines(color: Colors.transparent),
+                        ),
                 primaryYAxis: CategoryAxis(isVisible: false),
                 plotAreaBorderColor: Colors.transparent,
               ),
@@ -105,7 +106,7 @@ class Panel extends StatelessWidget {
     }
   }
 
-  static List<ColumnSeries<NoiseLv, Decibel>> getData(List<Decibel> decibels) {
+  static List<ColumnSeries<NoiseLv, int>> getData(List<Decibel> decibels) {
     final total = decibels.length;
     int getFreq(int binWidth, List<Decibel> decibels) => decibels
         .where((db) => (binWidth / 10).floor() == (db / 10).floor())
@@ -113,19 +114,23 @@ class Panel extends StatelessWidget {
     double getMag(int exp) => pow(1.5, exp).toDouble();
     final data = <NoiseLv>[
       //magnificationはグラフを見やすくするためdBの定義的に正しい2.0の倍数にしてない
-      NoiseLv(50, getMag(1), getFreq(50, decibels) / total),
-      NoiseLv(60, getMag(2), getFreq(60, decibels) / total),
-      NoiseLv(70, getMag(3), getFreq(70, decibels) / total),
-      NoiseLv(80, getMag(4), getFreq(80, decibels) / total),
-      NoiseLv(90, getMag(5), getFreq(90, decibels) / total),
-      NoiseLv(100, getMag(6), getFreq(100, decibels) / total),
-      NoiseLv(110, getMag(7), getFreq(110, decibels) / total),
-      NoiseLv(120, getMag(8), getFreq(120, decibels) / total),
+      NoiseLv(10, getMag(1), getFreq(10, decibels) / total),
+      NoiseLv(20, getMag(2), getFreq(20, decibels) / total),
+      NoiseLv(30, getMag(3), getFreq(30, decibels) / total),
+      NoiseLv(40, getMag(4), getFreq(40, decibels) / total),
+      NoiseLv(50, getMag(5), getFreq(50, decibels) / total),
+      NoiseLv(60, getMag(6), getFreq(60, decibels) / total),
+      NoiseLv(70, getMag(7), getFreq(70, decibels) / total),
+      NoiseLv(80, getMag(8), getFreq(80, decibels) / total),
+      NoiseLv(90, getMag(9), getFreq(90, decibels) / total),
+      NoiseLv(100, getMag(10), getFreq(100, decibels) / total),
+      NoiseLv(110, getMag(11), getFreq(110, decibels) / total),
+      NoiseLv(120, getMag(12), getFreq(120, decibels) / total),
     ];
-    return <ColumnSeries<NoiseLv, Decibel>>[
+    return <ColumnSeries<NoiseLv, int>>[
       ColumnSeries(
         dataSource: data,
-        xValueMapper: (datum, _) => datum.decibel,
+        xValueMapper: (datum, _) => datum.decibel.toInt(),
         yValueMapper: (datum, _) => datum.magnification,
         pointColorMapper: (datum, _) => getColorFromMode(datum.appearanceRate),
         width: 0.98,
