@@ -22,9 +22,9 @@ class Panel extends StatelessWidget {
               child: SfCartesianChart(
                 series: getData(decibels),
                 primaryXAxis: CategoryAxis(
-                    majorGridLines:
-                        const MajorGridLines(color: Colors.transparent),
-                        ),
+                  majorGridLines:
+                      const MajorGridLines(color: Colors.transparent),
+                ),
                 primaryYAxis: CategoryAxis(isVisible: false),
                 plotAreaBorderColor: Colors.transparent,
               ),
