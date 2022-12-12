@@ -61,8 +61,7 @@ class MainPageState extends State<MainPage> {
         _isRecording = true;
       }
       if (noiseReading.maxDecibel > 0) {
-        decibels
-            .add(noiseReading.maxDecibel);
+        decibels.add(noiseReading.maxDecibel);
         // 一時的にmaxを使うけど、最終的には代表せず全部使うことになりそう
         // 未補正の値
       }
