@@ -66,9 +66,6 @@ class MainPageState extends State<MainPage> {
         // 未補正の値
       }
     });
-    if (kDebugMode) {
-      print(noiseReading.toString());
-    }
   }
 
   void onError(Object error) {
