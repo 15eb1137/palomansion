@@ -5,13 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-typedef Decibel = double;
+import 'decibel.dart';
 
-final decibelProvider = StateProvider<List<double>>((ref) => [0.0]);
 
 class NoiseLv {
   NoiseLv(this.decibel, this.magnification, this.appearanceRate);
-  final Decibel decibel;
+  final double decibel;
   final double magnification;
   final double appearanceRate;
 }
@@ -53,9 +52,9 @@ final columnSeriesChartProvider = Provider((ref) {
     }
   }
 
-  List<ColumnSeries<NoiseLv, int>> getData(List<Decibel> decibels) {
+  List<ColumnSeries<NoiseLv, int>> getData(List<double> decibels) {
     final total = decibels.length;
-    int getFreq(int binWidth, List<Decibel> decibels) => decibels
+    int getFreq(int binWidth, List<double> decibels) => decibels
         .where((db) => (binWidth / 10).floor() == (db / 10).floor())
         .length;
     double getMag(int exp) => pow(1.5, exp).toDouble();
@@ -100,6 +99,7 @@ class Panel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final decibels = ref.watch(decibelProvider);
     return SizedBox(
         height: 450,
         child: Stack(
@@ -116,7 +116,7 @@ class Panel extends ConsumerWidget {
                   text: TextSpan(children: [
                     TextSpan(
                         text:
-                            ref.watch(decibelProvider).last.toStringAsFixed(0),
+                            decibels.last.toStringAsFixed(0),
                         style: const TextStyle(fontSize: 64)),
                     const TextSpan(text: 'dB', style: TextStyle(fontSize: 16))
                   ], style: const TextStyle(color: Colors.black)),
@@ -125,11 +125,11 @@ class Panel extends ConsumerWidget {
                   text: TextSpan(children: [
                     TextSpan(
                         text:
-                            'AVG:${ref.watch(decibelProvider).average.toStringAsFixed(1)}dB'),
+                            'AVG:${decibels.average.toStringAsFixed(1)}dB'),
                     const TextSpan(text: '｜'),
                     TextSpan(
                         text:
-                            'MAX:${ref.watch(decibelProvider).max.toStringAsFixed(1)}dB'),
+                            'MAX:${decibels.max.toStringAsFixed(1)}dB'),
                   ], style: const TextStyle(color: Colors.grey, fontSize: 20)),
                 )
               ]),

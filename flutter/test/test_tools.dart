@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:noise_meter/noise_meter.dart';
-import 'package:palomansion/main.dart';
+import 'package:palomansion/decibel.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 Widget wrap(Widget child) {
