@@ -2,11 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:noise_meter/noise_meter.dart';
 import 'package:palomansion/panel.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -30,18 +31,17 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MainPage extends StatefulWidget {
+class MainPage extends ConsumerStatefulWidget {
   const MainPage({super.key});
 
   @override
   MainPageState createState() => MainPageState();
 }
 
-class MainPageState extends State<MainPage> {
+class MainPageState extends ConsumerState<MainPage> {
   bool _isRecording = false;
   StreamSubscription<NoiseReading>? _noiseSubscription;
   late NoiseMeter _noiseMeter;
-  List<Decibel> decibels = [0.0];
 
   @override
   void initState() {
@@ -61,7 +61,9 @@ class MainPageState extends State<MainPage> {
         _isRecording = true;
       }
       if (noiseReading.maxDecibel > 0) {
-        decibels.add(noiseReading.maxDecibel);
+        ref
+            .watch(decibelProvider.notifier)
+            .update((state) => state..add(noiseReading.maxDecibel));
         // 一時的にmaxを使うけど、最終的には代表せず全部使うことになりそう
         // 未補正の値
       }
@@ -107,7 +109,7 @@ class MainPageState extends State<MainPage> {
       appBar: AppBar(
         title: const Text('騒音ハック'),
       ),
-      body: Panel(decibels),
+      body: Panel(),
       floatingActionButton: FloatingActionButton(
           backgroundColor: _isRecording ? Colors.red : Colors.green,
           onPressed: _isRecording ? stop : start,

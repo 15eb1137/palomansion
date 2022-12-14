@@ -2,11 +2,12 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 Widget wrap(Widget child) {
-  return MaterialApp(home: Material(child: child));
+  return ProviderScope(child: MaterialApp(home: Material(child: child)));
 }
 
 void initializeFakeSensorChannel(String channelName, List<double> data) {

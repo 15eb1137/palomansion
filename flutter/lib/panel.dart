@@ -2,103 +2,50 @@ import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 typedef Decibel = double;
 
-class Panel extends StatelessWidget {
-  const Panel(this.decibels, {super.key});
+final decibelProvider = StateProvider<List<double>>((ref) => [0.0]);
 
-  final List<Decibel> decibels;
+class NoiseLv {
+  NoiseLv(this.decibel, this.magnification, this.appearanceRate);
+  final Decibel decibel;
+  final double magnification;
+  final double appearanceRate;
+}
 
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-        height: 450,
-        child: Stack(
-          children: [
-            SizedBox(
-              height: 400,
-              child: SfCartesianChart(
-                series: getData(decibels),
-                primaryXAxis: CategoryAxis(
-                  majorGridLines:
-                      const MajorGridLines(color: Colors.transparent),
-                ),
-                primaryYAxis: CategoryAxis(isVisible: false),
-                plotAreaBorderColor: Colors.transparent,
-              ),
-            ),
-            Positioned(
-              left: 20,
-              top: 48,
-              child: Column(children: [
-                RichText(
-                  text: TextSpan(children: [
-                    TextSpan(
-                        text: decibels.last.toStringAsFixed(0),
-                        style: const TextStyle(fontSize: 64)),
-                    const TextSpan(text: 'dB', style: TextStyle(fontSize: 16))
-                  ], style: const TextStyle(color: Colors.black)),
-                ),
-                RichText(
-                  text: TextSpan(children: [
-                    TextSpan(
-                        text: 'AVG:${decibels.average.toStringAsFixed(1)}dB'),
-                    const TextSpan(text: '｜'),
-                    TextSpan(text: 'MAX:${decibels.max.toStringAsFixed(1)}dB'),
-                  ], style: const TextStyle(color: Colors.grey, fontSize: 20)),
-                )
-              ]),
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Row(mainAxisSize: MainAxisSize.min, children: [
-                const Text('少'),
-                Container(
-                  width: 250,
-                  height: 30,
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: FractionalOffset.centerRight,
-                      end: FractionalOffset.centerLeft,
-                      colors: [
-                        Colors.teal,
-                        Colors.green,
-                        Colors.lightGreen,
-                        Colors.lime,
-                        Colors.yellow,
-                        Colors.orange,
-                        Colors.deepOrange,
-                        Colors.red
-                      ],
-                    ),
-                  ),
-                ),
-                const Text('多'),
-              ]),
-            ),
-          ],
-        ));
-  }
+final colorsLevelProvider = Provider((ref) => [
+      Colors.teal,
+      Colors.green,
+      Colors.lightGreen,
+      Colors.lime,
+      Colors.yellow,
+      Colors.orange,
+      Colors.deepOrange,
+      Colors.red
+    ]);
 
-  static Color getColorFromMode(double rate) {
+final columnSeriesChartProvider = Provider((ref) {
+  final decibels = ref.watch(decibelProvider);
+  Color getColorFromMode(double rate) {
     if (rate > 0.75) {
-      return Colors.teal;
+      return ref.read(colorsLevelProvider)[0];
     } else if (rate > 0.5) {
-      return Colors.green;
+      return ref.read(colorsLevelProvider)[1];
     } else if (rate > 0.31) {
-      return Colors.lightGreen;
+      return ref.read(colorsLevelProvider)[2];
     } else if (rate > 0.16) {
-      return Colors.lime;
+      return ref.read(colorsLevelProvider)[3];
     } else if (rate > 0.07) {
-      return Colors.yellow;
+      return ref.read(colorsLevelProvider)[4];
     } else if (rate > 0.02) {
-      return Colors.orange;
+      return ref.read(colorsLevelProvider)[5];
     } else if (rate > 0.01) {
-      return Colors.deepOrange;
+      return ref.read(colorsLevelProvider)[6];
     } else if (rate > 0) {
-      return Colors.red;
+      return ref.read(colorsLevelProvider)[7];
     } else if (rate == 0) {
       return Colors.grey;
     } else {
@@ -106,7 +53,7 @@ class Panel extends StatelessWidget {
     }
   }
 
-  static List<ColumnSeries<NoiseLv, int>> getData(List<Decibel> decibels) {
+  List<ColumnSeries<NoiseLv, int>> getData(List<Decibel> decibels) {
     final total = decibels.length;
     int getFreq(int binWidth, List<Decibel> decibels) => decibels
         .where((db) => (binWidth / 10).floor() == (db / 10).floor())
@@ -137,11 +84,75 @@ class Panel extends StatelessWidget {
       ),
     ];
   }
-}
 
-class NoiseLv {
-  NoiseLv(this.decibel, this.magnification, this.appearanceRate);
-  final Decibel decibel;
-  final double magnification;
-  final double appearanceRate;
+  return SfCartesianChart(
+    series: getData(decibels),
+    primaryXAxis: CategoryAxis(
+      majorGridLines: const MajorGridLines(color: Colors.transparent),
+    ),
+    primaryYAxis: CategoryAxis(isVisible: false),
+    plotAreaBorderColor: Colors.transparent,
+  );
+});
+
+class Panel extends ConsumerWidget {
+  const Panel({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return SizedBox(
+        height: 450,
+        child: Stack(
+          children: [
+            SizedBox(
+              height: 400,
+              child: ref.watch(columnSeriesChartProvider),
+            ),
+            Positioned(
+              left: 20,
+              top: 48,
+              child: Column(children: [
+                RichText(
+                  text: TextSpan(children: [
+                    TextSpan(
+                        text:
+                            ref.watch(decibelProvider).last.toStringAsFixed(0),
+                        style: const TextStyle(fontSize: 64)),
+                    const TextSpan(text: 'dB', style: TextStyle(fontSize: 16))
+                  ], style: const TextStyle(color: Colors.black)),
+                ),
+                RichText(
+                  text: TextSpan(children: [
+                    TextSpan(
+                        text:
+                            'AVG:${ref.watch(decibelProvider).average.toStringAsFixed(1)}dB'),
+                    const TextSpan(text: '｜'),
+                    TextSpan(
+                        text:
+                            'MAX:${ref.watch(decibelProvider).max.toStringAsFixed(1)}dB'),
+                  ], style: const TextStyle(color: Colors.grey, fontSize: 20)),
+                )
+              ]),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Row(mainAxisSize: MainAxisSize.min, children: [
+                const Text('少'),
+                Container(
+                  width: 250,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: FractionalOffset.centerRight,
+                      end: FractionalOffset.centerLeft,
+                      colors: ref.read(colorsLevelProvider),
+                    ),
+                  ),
+                ),
+                const Text('多'),
+              ]),
+            ),
+          ],
+        ));
+  }
 }
