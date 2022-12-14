@@ -7,7 +7,6 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 
 import 'decibel.dart';
 
-
 class NoiseLv {
   NoiseLv(this.decibel, this.magnification, this.appearanceRate);
   final double decibel;
@@ -115,8 +114,7 @@ class Panel extends ConsumerWidget {
                 RichText(
                   text: TextSpan(children: [
                     TextSpan(
-                        text:
-                            decibels.last.toStringAsFixed(0),
+                        text: decibels.last.toStringAsFixed(0),
                         style: const TextStyle(fontSize: 64)),
                     const TextSpan(text: 'dB', style: TextStyle(fontSize: 16))
                   ], style: const TextStyle(color: Colors.black)),
@@ -124,12 +122,9 @@ class Panel extends ConsumerWidget {
                 RichText(
                   text: TextSpan(children: [
                     TextSpan(
-                        text:
-                            'AVG:${decibels.average.toStringAsFixed(1)}dB'),
+                        text: 'AVG:${decibels.average.toStringAsFixed(1)}dB'),
                     const TextSpan(text: '｜'),
-                    TextSpan(
-                        text:
-                            'MAX:${decibels.max.toStringAsFixed(1)}dB'),
+                    TextSpan(text: 'MAX:${decibels.max.toStringAsFixed(1)}dB'),
                   ], style: const TextStyle(color: Colors.grey, fontSize: 20)),
                 )
               ]),
