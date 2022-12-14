@@ -4,10 +4,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:noise_meter/noise_meter.dart';
+import 'package:palomansion/main.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 Widget wrap(Widget child) {
-  return ProviderScope(child: MaterialApp(home: Material(child: child)));
+  List<NoiseReading> dummy = [];
+  for (var i = 0; i < 10; i++) {
+    List<double> dummyInner = [];
+    for (var j = 0; j < 10; j++) {
+      dummyInner.add(Random().nextDouble() * 100);
+    }
+    dummy.add(NoiseReading(dummyInner));
+  }
+
+  return ProviderScope(overrides: [
+    noiseStreamProvider.overrideWith((ref) => Stream.fromIterable(dummy))
+  ], child: MaterialApp(home: Material(child: child)));
 }
 
 void initializeFakeSensorChannel(String channelName, List<double> data) {

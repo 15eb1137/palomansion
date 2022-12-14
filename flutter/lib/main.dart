@@ -39,14 +39,11 @@ class MainPage extends ConsumerStatefulWidget {
 }
 
 class MainPageState extends ConsumerState<MainPage> {
-  bool _isRecording = false;
   StreamSubscription<NoiseReading>? _noiseSubscription;
-  late NoiseMeter _noiseMeter;
 
   @override
   void initState() {
     super.initState();
-    _noiseMeter = NoiseMeter(onError);
   }
 
   @override
@@ -57,8 +54,8 @@ class MainPageState extends ConsumerState<MainPage> {
 
   void onData(NoiseReading noiseReading) {
     setState(() {
-      if (!_isRecording) {
-        _isRecording = true;
+      if (!ref.watch(isRecordingProvider)) {
+        ref.watch(isRecordingProvider.notifier).state = true;
       }
       if (noiseReading.maxDecibel > 0) {
         ref
@@ -70,16 +67,9 @@ class MainPageState extends ConsumerState<MainPage> {
     });
   }
 
-  void onError(Object error) {
-    if (kDebugMode) {
-      print(error.toString());
-    }
-    _isRecording = false;
-  }
-
   Future<void> start() async {
     try {
-      _noiseSubscription = _noiseMeter.noiseStream.listen(onData);
+      _noiseSubscription = ref.watch(noiseStreamProvider.stream).listen(onData);
     } catch (err) {
       if (kDebugMode) {
         print(err);
@@ -94,7 +84,7 @@ class MainPageState extends ConsumerState<MainPage> {
         _noiseSubscription = null;
       }
       setState(() {
-        _isRecording = false;
+        ref.watch(isRecordingProvider.notifier).state = false;
       });
     } catch (err) {
       if (kDebugMode) {
@@ -111,9 +101,30 @@ class MainPageState extends ConsumerState<MainPage> {
       ),
       body: Panel(),
       floatingActionButton: FloatingActionButton(
-          backgroundColor: _isRecording ? Colors.red : Colors.green,
-          onPressed: _isRecording ? stop : start,
-          child: _isRecording ? const Icon(Icons.stop) : const Icon(Icons.mic)),
+          backgroundColor:
+              ref.watch(isRecordingProvider) ? Colors.red : Colors.green,
+          onPressed: ref.watch(isRecordingProvider) ? stop : start,
+          child: ref.watch(isRecordingProvider)
+              ? const Icon(Icons.stop)
+              : const Icon(Icons.mic)),
     );
   }
 }
+
+final noiseStreamProvider = StreamProvider<NoiseReading>((ref) {
+  late NoiseMeter _noiseMeter;
+  bool _isRecording = ref.watch(isRecordingProvider);
+  void onError(Object error) {
+    if (kDebugMode) {
+      print(error.toString());
+    }
+    _isRecording = false;
+  }
+
+  _noiseMeter = NoiseMeter(onError);
+  return _noiseMeter.noiseStream;
+});
+
+final isRecordingProvider = StateProvider((ref) {
+  return false;
+});
