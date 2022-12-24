@@ -5,8 +5,8 @@ import 'package:noise_meter/noise_meter.dart';
 
 import 'panel.dart';
 
-class Decibels extends ConsumerWidget {
-  const Decibels({super.key});
+class DecibelsPage extends ConsumerWidget {
+  const DecibelsPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

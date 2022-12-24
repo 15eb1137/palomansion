@@ -33,6 +33,6 @@ class MainPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return const Decibels();
+    return const DecibelsPage();
   }
 }

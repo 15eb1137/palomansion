@@ -7,10 +7,10 @@ import 'test_tools.dart';
 void main() {
   testWidgets('MainPage test', (tester) async {
     await tester.pumpWidget(wrap(const MainPage()));
-    expect(find.byType(Decibels), findsOneWidget);
+    expect(find.byType(DecibelsPage), findsOneWidget);
   });
   testWidgets('Decibels test', (tester) async {
-    await tester.pumpWidget(wrap(const Decibels()));
+    await tester.pumpWidget(wrap(const DecibelsPage()));
     expect(find.textContaining(RegExp(r'^0dB$'), findRichText: true),
         findsOneWidget);
     await tester.pumpAndSettle();
