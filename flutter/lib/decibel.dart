@@ -28,6 +28,7 @@ class DecibelsPage extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('騒音ハック'),
       ),
+      // ignore: prefer_const_constructors
       body: Panel(),
     );
   }
