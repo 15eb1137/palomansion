@@ -16,6 +16,8 @@ dependencies:
   syncfusion_flutter_charts: ^20.3.59
   # DataSource
   noise_meter: ^3.1.0
+  flutter_riverpod: ^2.1.1
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
