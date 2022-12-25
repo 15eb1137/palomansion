@@ -119,9 +119,12 @@ class Panel extends ConsumerWidget {
                 RichText(
                   text: TextSpan(children: [
                     TextSpan(
-                        text: 'AVG:${decibels.map((db)=>db.value).average.toStringAsFixed(1)}dB'),
+                        text:
+                            'AVG:${decibels.map((db) => db.value).average.toStringAsFixed(1)}dB'),
                     const TextSpan(text: '｜'),
-                    TextSpan(text: 'MAX:${decibels.map((db)=>db.value).max.toStringAsFixed(1)}dB'),
+                    TextSpan(
+                        text:
+                            'MAX:${decibels.map((db) => db.value).max.toStringAsFixed(1)}dB'),
                   ], style: const TextStyle(color: Colors.grey, fontSize: 20)),
                 )
               ]),
