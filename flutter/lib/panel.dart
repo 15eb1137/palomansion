@@ -30,7 +30,7 @@ class Panel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final decibels = ref.watch(decibelProvider);
+    final decibels = ref.watch(decibelProvider).decibels;
     List<ColumnSeries<NoiseLv, int>> getData(List<double> decibels) {
       final total = decibels.length;
       int getFreq(int binWidth, List<double> decibels) => decibels
@@ -95,7 +95,7 @@ class Panel extends ConsumerWidget {
             SizedBox(
               height: 400,
               child: SfCartesianChart(
-                series: getData(decibels),
+                series: getData(decibels.map((db) => db.value).toList()),
                 primaryXAxis: CategoryAxis(
                   majorGridLines:
                       const MajorGridLines(color: Colors.transparent),
@@ -111,7 +111,7 @@ class Panel extends ConsumerWidget {
                 RichText(
                   text: TextSpan(children: [
                     TextSpan(
-                        text: decibels.last.toStringAsFixed(0),
+                        text: decibels.last.value.toStringAsFixed(0),
                         style: const TextStyle(fontSize: 64)),
                     const TextSpan(text: 'dB', style: TextStyle(fontSize: 16))
                   ], style: const TextStyle(color: Colors.black)),
@@ -119,9 +119,9 @@ class Panel extends ConsumerWidget {
                 RichText(
                   text: TextSpan(children: [
                     TextSpan(
-                        text: 'AVG:${decibels.average.toStringAsFixed(1)}dB'),
+                        text: 'AVG:${decibels.map((db)=>db.value).average.toStringAsFixed(1)}dB'),
                     const TextSpan(text: '｜'),
-                    TextSpan(text: 'MAX:${decibels.max.toStringAsFixed(1)}dB'),
+                    TextSpan(text: 'MAX:${decibels.map((db)=>db.value).max.toStringAsFixed(1)}dB'),
                   ], style: const TextStyle(color: Colors.grey, fontSize: 20)),
                 )
               ]),

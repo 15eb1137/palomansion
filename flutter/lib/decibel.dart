@@ -17,9 +17,7 @@ class DecibelsPage extends ConsumerWidget {
         ref.watch(isRecordingProvider.notifier).state = true;
       }
       if (noiseReading.maxDecibel > 0) {
-        ref
-            .watch(decibelProvider.notifier)
-            .update((state) => state..add(noiseReading.maxDecibel));
+        ref.watch(decibelProvider).addDecibel(Decibel(noiseReading.maxDecibel));
         // 一時的にmaxを使うけど、最終的には代表せず全部使うことになりそう
         // 未補正の値
       }
@@ -47,4 +45,29 @@ final noiseStreamProvider = StreamProvider<NoiseReading>((ref) {
 
 final isRecordingProvider = StateProvider((ref) => true);
 
-final decibelProvider = StateProvider<List<double>>((ref) => [0.0]);
+final decibelProvider = StateProvider<RecordLog>((ref) =>
+    RecordLog(id: RecordLogId('record_log_00'), decibels: [Decibel(0.0)]));
+
+@immutable
+class Decibel {
+  Decibel(this.value) : assert(value.isFinite);
+
+  final double value;
+}
+
+@immutable
+class RecordLogId {
+  RecordLogId(this.value) : assert(value.isNotEmpty);
+  final String value;
+}
+
+class RecordLog {
+  RecordLog({required this.id, required List<Decibel> decibels})
+      : _decibels = decibels;
+  final RecordLogId id;
+  List<Decibel> _decibels;
+
+  List<Decibel> get decibels => _decibels;
+
+  void addDecibel(Decibel newDecibel) => _decibels = [..._decibels, newDecibel];
+}
